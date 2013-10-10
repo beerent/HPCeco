@@ -8,8 +8,11 @@
  *Brent Ryczak
  */
 
-//these boolean values are defined to determine if a creature's diet 
-//includes fish, plant, or both.
+/*
+ *these boolean values are defined to determine if a creature's diet 
+ *includes fish, plant, or both.
+ */
+
 typedef int boolean;
 #define true 1;
 #define false 0;
@@ -99,7 +102,7 @@ typedef struct ecosystem ECO;
 
 void createEcosystem(ECO* eco)
 { 
-  // get ecosystem name and parameters from user, to create a new ecosystem.
+  /* get ecosystem name and parameters from user, to create a new ecosystem. */
   int x, y;
   printf("Enter name of ecosystem: ");
   scanf("%s", eco->name);
@@ -159,65 +162,16 @@ void printCreatures(ECO *eco)
 
 
 
-void makeMusky(creature *cp)
+void makeType(creature *cp, int type, int agg, int worth, int health, boolean fish, boolean plant)
 {
-  cp-> type.typeOp = 0;
-  cp-> type.aggressionLevel = 5;
-  cp-> type.worth = 0; //FIXME
-  cp-> type.health = 10;
-  cp-> type.diet.fish = true;
-  cp-> type.diet.plant = false;
+  cp-> type.typeOp = type;
+  cp-> type.aggressionLevel = agg;
+  cp-> type.worth = worth; //FIXME
+  cp-> type.health = health;
+  cp-> type.diet.fish = fish;
+  cp-> type.diet.plant = plant;
 }
 
-void makePike(creature *cp)
-{
-  cp-> type.typeOp = 1;
-  cp-> type.aggressionLevel = 4;
-  cp-> type.worth = 0; //FIXME
-  cp-> type.health = 8;
-  cp-> type.diet.fish = true;
-  cp-> type.diet.plant = false;
-}
-
-void makeBass(creature *cp)
-{
-  cp-> type.typeOp = 2;
-  cp-> type.aggressionLevel = 3;
-  cp-> type.worth = 0; //FIXME
-  cp-> type.health = 6;
-  cp-> type.diet.fish = true;
-  cp-> type.diet.plant = true;
-}
-
-void makeMinnow(creature *cp)
-{
-  cp-> type.typeOp = 3;
-  cp-> type.aggressionLevel = 1;
-  cp-> type.worth = 0; //FIXME
-  cp-> type.health = 2;
-  cp-> type.diet.fish = true;
-  cp-> type.diet.plant = true;
-}
-
-void makeSeaweed(creature *cp)
-{
-  cp-> type.typeOp = 4;
-  cp-> type.aggressionLevel = 0;
-  cp-> type.worth = 0; //FIXME
-  cp-> type.health = 1;
-  cp-> type.diet.fish = false;
-  cp-> type.diet.plant = false;
-}
-
-void makeAlgae(creature *cp)
-{
-  cp-> type.typeOp = 5;
-  cp-> type.aggressionLevel = 5;
-  cp-> type.worth = 0; //FIXME
-  cp-> type.health = 1;
-  cp-> type.diet.fish = false;
-  cp-> type.diet.plant = false;
-}
 
 //accepts a creature and a string representation of a creature to be created.
 //if the string is a valid creature in this ecosystem, turn creature into that 
@@ -236,15 +190,16 @@ void buildCreature(creature *cp, int op)
   // Seaweed :4
   // Algae   :5
 
-  if(op == 0) makeMusky(cp); //Musky
-  else if(op == 1) makePike(cp); //Pike
-  else if(op == 2) makeBass(cp); //Bass
-  else if(op == 3) makeMinnow(cp); //Minnow
-  else if(op == 4) makeSeaweed(cp);
-  else if(op == 5) makeAlgae(cp);
-  else{
-    //&cp = randomCreature();
-  }
+
+ if(op == 0) makeType(cp, 0, 5, 0, 10, 1, 0); //Musky
+ else if(op == 1) makeType(cp, 1, 4, 0, 8, 1, 0); //Pike
+ else if(op == 2) makeType(cp, 2, 3, 0, 6, 1, 1); //Bass
+ else if(op == 3) makeType(cp, 3, 1, 0, 2, 1, 1); //Minnow
+ else if(op == 4) makeType(cp, 4, 0, 0, 1, 0, 0);
+ else if(op == 5) makeType(cp, 5, 0 ,0, 1, 0, 0);
+ else{
+   
+ }
 }
 
 //this function creates a skeleton of a new creature, and returns its pointer
