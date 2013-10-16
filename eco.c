@@ -1,4 +1,3 @@
-
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -91,6 +90,7 @@ struct ecosystem
   int x, y, size, creatureMaxCount, creatureCount, identifier;
   creature **creaturesp;
   char name[12];
+  int **graph;
 };
 typedef struct ecosystem ECO;
 
@@ -121,6 +121,13 @@ void createEcosystem(ECO* eco)
   eco->identifier = 0;
   eco->creatureCount = 0;
   eco->creatureMaxCount = x*y;
+  
+  /* initialize graph  */
+  eco->graph = malloc(sizeof(int*)*x);
+  int i;
+  for(i = 0; i < x; i++){
+    eco->graph[i] = malloc(sizeof(int)*y);
+  }
 }
 
 //returns total number of creatures in eco
@@ -153,6 +160,17 @@ void printEcoState(ECO *eco)
   printf("total ecosystem size: %d\n", eco->size);
   printf("total creatures in ecosystem: %d\n", countCreatures(eco));
   printf("\n\n");
+}
+
+void printGraph(ECO *eco)
+{
+  int i, j;
+  for(i = 0; i < eco->x; i++){
+    for(j = 0; j < eco->y; j++){
+      printf("%d ",eco->graph[i][j]);
+    }
+    printf("\n");
+  }
 }
 
 void printCreatures(ECO *eco)
@@ -269,14 +287,14 @@ int main()
 {
   ECO *ep = malloc(sizeof(ECO));
   createEcosystem(ep); 
-
-  int i;
-  for(i = 0; i < 100; i++){
-    creature *c;
-    c = randomCreature();
-    addCreature(ep, c);
-  }
-  printCreatures(ep);
-  printEcoState(ep);
+  printGraph(ep);
+  //int i;
+  //for(i = 0; i < 100; i++){
+  //  creature *c;
+  //  c = randomCreature();
+  //  addCreature(ep, c);
+  //}
+  //printCreatures(ep);
+  //printEcoState(ep);
   return 0;
 }
