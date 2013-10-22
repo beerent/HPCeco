@@ -15,7 +15,6 @@
 typedef int boolean;
 #define true 1;
 #define false 0;
-int psuedoRandomNumber = 0; 
 
 
 //diet is the deciding factor of what the creature can eat. There are two 
@@ -118,7 +117,7 @@ void createEcosystem(ECO* eco)
    */ 
   eco->size = x*y; 
   
-  eco->creaturesp = malloc(sizeof(creature*)*99);
+  eco->creaturesp = malloc(sizeof(creature*)*eco->size);
   eco->identifier = 0;
   eco->creatureCount = 0;
   eco->creatureMaxCount = x*y;
@@ -134,6 +133,28 @@ void createEcosystem(ECO* eco)
       eco->graph[i][j] = -1;
     }
   }
+}
+
+creature* getCreatureByID(ECO *ep, int id){
+  int i;
+  for(i = 0; i < ep->creatureCount; i++){
+    if(ep->creaturesp[i]->id ==  id){
+      return ep->creaturesp[i];
+    }
+  }
+  return NULL;
+}
+
+creature* getCreatureByCoords(ECO *ep, int x, int y)
+{
+  int id = ep->graph[x][y];
+  int i;
+  for(i = 0; i < ep->creatureCount; i++){
+    if(ep->creaturesp[i]->id ==  id){
+      return ep->creaturesp[i];
+    }
+  }
+  return NULL;
 }
 
 //returns total number of creatures in eco
@@ -180,10 +201,21 @@ void addCreature(ECO *eco, creature *cp)
   setRandomCoords(eco, cp);
 }
 
-void removeCreature(ECO *eco, creature *cp)
+void removeCreature(ECO *ep, creature *cp)
 {
   //TODO
-  eco->creatureCount--;
+  int i;
+  for(i = 0; i < ep->size; i++){
+    if(cp->id == ep->creaturesp[i]->id){
+      //creature to be removed
+      ep->graph[ep->creaturesp[i]->x][ep->creaturesp[i]->y] = -1;
+      for(i; i < ep->creatureCount; i++){
+        ep->creaturesp[i] = ep->creaturesp[i+1];
+      }
+      break;
+    }
+   }
+  ep->creatureCount--;
 }
 
 void creatureBattle(ECO *ep, creature *cp1, creature *cp2)
@@ -191,13 +223,31 @@ void creatureBattle(ECO *ep, creature *cp1, creature *cp2)
   cp1-> inBattle = true;
   cp2-> inBattle = true;
 
-
+  if(cp1->type.aggressionLevel > cp2->type.aggressionLevel){
+    printf("CREATURE %d CONSUMES CREATURE %d\n", cp1->id, cp2->id);
+    removeCreature(ep, cp2);
+    cp1-> inBattle = false;
+  }else if(cp2->type.aggressionLevel > cp1->type.aggressionLevel){
+    printf("CREATURE %d CONSUMES CREATURE %d\n", cp2->id, cp1->id);
+    removeCreature(ep, cp1);
+    cp2-> inBattle = false;
+  }else{
+    if(randomNum(2) == 1){
+      printf("CREATURE %d CONSUMES CREATURE %d\n", cp1->id, cp2->id);
+      removeCreature(ep, cp2);
+      cp1->inBattle = false;
+    }else{
+      printf("CREATURE %d CONSUMES CREATURE %d\n", cp2->id, cp1->id);
+      removeCreature(ep, cp1);
+      cp2->inBattle = false;
+    }
+  }
 }
 
 //prints the entire status of the passed in ecosystem to the console.
 void printEcoState(ECO *eco)
 {  
-  printf("\n\nname of ecosystem: %s\n",eco->name);
+  printf("name of ecosystem: %s\n",eco->name);
   printf("%s's dimensions: %d x %d\n",eco->name, eco->x, eco->y);
   printf("total ecosystem size: %d\n", eco->size);
   printf("total creatures in ecosystem: %d\n", countCreatures(eco));
@@ -209,10 +259,13 @@ void printGraph(ECO *eco)
   int i, j;
   for(i = 0; i < eco->x; i++){
     for(j = 0; j < eco->y; j++){
-      printf("%d ",eco->graph[i][j]);
+      if((sizeof(eco->graph[i][j]) / sizeof(int)) == 1) printf(" %d ",eco->graph[i][j]);
+      else if((sizeof(eco->graph[i][j]) / sizeof(int)) == 2) printf("%d ", eco->graph[i][j]);
+      else printf("%d", eco->graph[i][j]);
     }
     printf("\n");
   }
+  printf("\n\n");
 }
 
 void printCreatures(ECO *eco)
@@ -277,10 +330,7 @@ void buildCreature(creature *cp, int op)
 //the creature type is chosen at random, randomly generating a random typeOp code
 creature* randomCreature(){
 
-  //random seed initialized to 0
-  //srand(time(0));
-  //generate op number
-  int op = randomNum(4); 
+  int op = randomNum(6); 
   creature *cp = malloc(sizeof(creature));
   buildCreature(cp, op);
   return cp;
@@ -323,22 +373,28 @@ int getCreatureTypeOp(creature *cp)
 
 /*----------MAIN FUNCTION-----------*/
 
-
+void generateRandomCreatures(ECO *ep, int max)
+{
+  int i;
+  for(i = 0; i < max; i++){
+    creature *c;
+    c = randomCreature();
+    addCreature(ep, c);
+  }
+}
 
 int main()
 {
   ECO *ep = malloc(sizeof(ECO));
   createEcosystem(ep); 
-  
-  int i;
-  for(i = 0; i < 3; i++){
-    creature *c;
-    c = randomCreature();
-    addCreature(ep, c);
-  }
-  printCreatures(ep);
-  //printEcoState(ep);
-   
-  //printGraph(ep);
+  generateRandomCreatures(ep, 5);
+
+  printGraph(ep);
+  printEcoState(ep);
+
+  creatureBattle(ep, getCreatureByID(ep, 0), getCreatureByID(ep, 1));
+
+  printGraph(ep);
+  printEcoState(ep);
   return 0;
 }
