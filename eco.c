@@ -15,6 +15,7 @@
 typedef int boolean;
 #define true 1;
 #define false 0;
+int psuedoRandomNumber = 5; 
 
 
 //diet is the deciding factor of what the creature can eat. There are two 
@@ -76,7 +77,7 @@ typedef struct type type;
 struct creature
 {
   type type;
-  int id;
+  int id, x, y;
   boolean inBattle;
 };
 typedef struct creature creature;
@@ -141,7 +142,7 @@ void addCreature(ECO *eco, creature *cp)
 {
   //max creature allowance check.
   if(eco->creatureCount == eco->creatureMaxCount){
-    printf("Cannot add creature. Maximum exceeded\n.");
+    printf("Cannot add creature. Maximum exceeded.\n");
     return;
   }
 
@@ -150,6 +151,12 @@ void addCreature(ECO *eco, creature *cp)
   eco->identifier++;
   eco->creaturesp[eco->creatureCount] = (cp);
   eco->creatureCount++;
+}
+
+void removeCreature(ECO *eco, creature *cp)
+{
+  //TODO
+  eco->creatureCount--;
 }
 
 //prints the entire status of the passed in ecosystem to the console.
@@ -231,14 +238,32 @@ void buildCreature(creature *cp, int op)
  }
 }
 
+void setRandomCoords(ECO *ep, creature *cp)
+{
+  int x = randomNum(ep->x);
+  int y = randomNum(ep->y);
+  while(ep->graph[x][y] == 1){
+    x = randomNum(ep->x);
+    y = randomNum(ep->y);
+  }
+  cp->x = x;
+  cp->y = y;
+  ep->graph[x][y] = getCreatureID(cp); 
+}
+
+//temporary function returns a psuedo random number.
+int randomNum(int max)
+{
+  return psuedoRandomNumber++ % max;
+}
 //this function creates a skeleton of a new creature, and returns its pointer
 //the creature type is chosen at random, randomly generating a random typeOp code
 creature* randomCreature(){
 
   //random seed initialized to 0
-  srand(time(NULL));
+  srand(time(0));
   //generate op number
-  int op = rand() % 4; 
+  int op = randomNum(4); 
   creature *cp = malloc(sizeof(creature));
   buildCreature(cp, op);
   return cp;
@@ -288,13 +313,13 @@ int main()
   ECO *ep = malloc(sizeof(ECO));
   createEcosystem(ep); 
   printGraph(ep);
-  //int i;
-  //for(i = 0; i < 100; i++){
-  //  creature *c;
-  //  c = randomCreature();
-  //  addCreature(ep, c);
-  //}
-  //printCreatures(ep);
-  //printEcoState(ep);
+  int i;
+  for(i = 0; i < 100; i++){
+    creature *c;
+    c = randomCreature();
+    addCreature(ep, c);
+  }
+  printCreatures(ep);
+  printEcoState(ep);
   return 0;
 }
