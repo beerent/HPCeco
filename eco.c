@@ -280,6 +280,14 @@ void printCreatures(ECO *eco)
   printf("\n");
 }
 
+void runEcosystem(ECO *ep)
+{
+  while(1){
+    printf("woo");
+    //sleep(2000);
+  }
+}
+
 
 
 /*----------CREATURE CREATION FUNCTIONS-----------*/
@@ -386,7 +394,9 @@ void generateRandomCreatures(ECO *ep, int max)
 int main()
 {
   ECO *ep = malloc(sizeof(ECO));
-  createEcosystem(ep); 
+  createEcosystem(ep);
+  runEcosystem(ep);
+  /*
   generateRandomCreatures(ep, 5);
 
   printGraph(ep);
@@ -396,5 +406,6 @@ int main()
 
   printGraph(ep);
   printEcoState(ep);
+  */
   return 0;
 }
