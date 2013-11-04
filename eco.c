@@ -282,9 +282,10 @@ void printCreatures(ECO *eco)
 
 void runEcosystem(ECO *ep)
 {
+  printf("woo");
   while(1){
     printf("woo");
-    //sleep(2000);
+    sleep(2000);
   }
 }
 
