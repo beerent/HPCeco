@@ -1,4 +1,4 @@
-import java.io.*;
+import java.net.*;
 import javax.swing.*;
 public class javaGraphicsPortal extends Thread{
 	private String name;
