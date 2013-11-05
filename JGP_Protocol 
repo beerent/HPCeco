@@ -1,0 +1,10 @@
+javaGraphicsPortal protocol:
+
+1: establish connection to the java ServerSocket
+2: INITIALIZATION
+	-if client doesnt receive 1 between each, resend
+
+	a) Handshake client -> server -> client
+   	b) client -> window name | server -> 1
+   	c) client -> window x value | server -> 1
+   	d) client -> window y value | server -> 1
