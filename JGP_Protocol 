@@ -7,4 +7,4 @@ javaGraphicsPortal protocol:
 	a) Handshake client -> server -> client
    	b) client -> window name | server -> 1
    	c) client -> window x value | server -> 1
-   	d) client -> window y value | server -> 1
+   	d) client -> window y value | server -> 1 
