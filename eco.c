@@ -21,6 +21,8 @@ typedef int boolean;
 #define true 1;
 #define false 0;
 
+#define PORT 9999;
+
 
 //diet is the deciding factor of what the creature can eat. There are two 
 //possible options that the creature may eat; 1) fish, 2) plants. It is possible
@@ -410,13 +412,36 @@ int runSocket()
   }
  
   serv_addr.sin_family = AF_INET;
-  serv_addr.sin_port = htons(9999);
-  serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+  serv_addr.sin_port = htons(9999); //defualt port set on the javaGraphicsPortal 
+  serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); //localhost
 
+  //check if connection fails
   if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr))<0){
       printf("\n Error : Connect Failed \n");
       return 1;
   }
+  int i = 0;
+  /*
+  while ( (n = read(sockfd, recvBuff, sizeof(recvBuff)-1)) > 0)
+    {
+      printf("in...\n");
+      recvBuff[n] = 0;
+      printf(recvBuff);
+      printf("...\n");
+    }
+    */
+    printf("out...\n");
+
+    /* Write a response to the server */
+    printf("sending...\n");
+    n = write(sockfd, "2",1);
+    n = write(sockfd, "3", 1);
+    printf("sent\n");
+    if (n < 0)
+    {
+        perror("ERROR writing to socket");
+        exit(1);
+    }
   return 0;
 
 }
@@ -424,7 +449,7 @@ int runSocket()
 int main()
 {
   int i = runSocket();
-  printf("%d\n", i);
+  printf("DONE: %d\n", i);
   /*
   ECO *ep = malloc(sizeof(ECO));
   createEcosystem(ep);

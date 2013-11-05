@@ -1,9 +1,13 @@
 import java.net.*;
 import javax.swing.*;
+import java.io.*;
 public class javaGraphicsPortal extends Thread{
 	private String name;
 	private final int PORT = 9999;
 	private int x, y;
+
+	private PrintWriter out;
+	private BufferedReader in;
 
 	public javaGraphicsPortal(){
 		this.name = "Graphics Portal";
@@ -45,10 +49,25 @@ public class javaGraphicsPortal extends Thread{
     		s = ss.accept();
     		//connection established
     		System.out.println("Connected on port " + PORT);
+
+    		//set up server IO to client
+    		this.out = new PrintWriter(s.getOutputStream(), true);
+    		this.in = new BufferedReader(new InputStreamReader(s.getInputStream()));
+
+    		//out.println("test");
+    		//out.println("test2");
+
+    		//read window name
+    		//read window x value
+    		//read window y value
+    		int inputIn = in.read();
+    		System.out.println("1:"+inputIn);
+    		inputIn = in.read();
+    		System.out.println("2:"+inputIn);
+
 		}catch(Exception e){
 			System.out.println("failed connection attempt on port " + PORT);
 		}
-
     }
 
     //sets the x and y axis for the JFrame
