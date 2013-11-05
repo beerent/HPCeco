@@ -420,7 +420,9 @@ int runSocket()
       printf("\n Error : Connect Failed \n");
       return 1;
   }
-  int i = 0;
+
+  //here, we are connected to the server
+
   /*
   while ( (n = read(sockfd, recvBuff, sizeof(recvBuff)-1)) > 0)
     {
@@ -429,12 +431,12 @@ int runSocket()
       printf(recvBuff);
       printf("...\n");
     }
-    */
-    printf("out...\n");
+
     /* Write a response to the server */
-    printf("sending...\n");
-    n = write(sockfd, "KEY",3);
-    //n = read(sockfd, recvBuff, sizeof(recvBuff)-1);
+    printf("C: sending key...\n");
+    n = write(sockfd, "clientKEY",8);
+    printf("C: key sent");
+    n = read(sockfd, recvBuff, sizeof(recvBuff)-1);
     printf("FROM SERVER: %s\n", recvBuff);
     //n = write(sockfd, "3", 1);
     //printf("sent\n");
