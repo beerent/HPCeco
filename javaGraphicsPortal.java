@@ -12,22 +12,43 @@ public class javaGraphicsPortal extends Thread{
 	}
 
 	public javaGraphicsPortal(int x, int y){
-
+		this.name = "Graphics Portal";
+		this.x = x;
+		this.y = y;
 	}
 
 	public javaGraphicsPortal(String name, int x, int y){
-
+		this.name = name;
+		this.x = x;
+		this.y = y;
 	}
 
 	//main method
 	public static void main(String[] args) {
-		javaGraphicsPortal jgp = new javaGraphicsPortal();
-		jgp.createAndShowGUI();
+		javaGraphicsPortal jgp = new javaGraphicsPortal("Brents World", 200, 200);
+		jgp.startPortal();
     }
 
     //runs the javaGraphicsPortal as a Thread
     public void startPortal(){
-    	ServerSocket ss = new ServerSocket(PORT);
+    	ServerSocket ss;
+    	Socket s;
+    	try{
+    		ss = new ServerSocket(PORT);
+    	}catch(Exception e){
+    		System.out.println("cannot connect to port " + PORT);
+    		return;
+    	}
+    	try{
+    		//waiting for connection
+    		System.out.println("waiting for connection...");
+    		s = ss.accept();
+    		//connection established
+    		System.out.println("Connected on port " + PORT);
+		}catch(Exception e){
+			System.out.println("failed connection attempt on port " + PORT);
+		}
+
     }
 
     //sets the x and y axis for the JFrame

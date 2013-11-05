@@ -3,6 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+
 /*
  *Brent Ryczak
  */
@@ -392,12 +397,39 @@ void generateRandomCreatures(ECO *ep, int max)
   }
 }
 
+int runSocket()
+{
+  int sockfd = 0,n = 0;
+  char recvBuff[1024];
+  struct sockaddr_in serv_addr;
+ 
+  memset(recvBuff, '0' ,sizeof(recvBuff));
+  if((sockfd = socket(AF_INET, SOCK_STREAM, 0))< 0){
+      printf("\n Error : Could not create socket \n");
+      return 1;
+  }
+ 
+  serv_addr.sin_family = AF_INET;
+  serv_addr.sin_port = htons(9999);
+  serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+  if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr))<0){
+      printf("\n Error : Connect Failed \n");
+      return 1;
+  }
+  return 0;
+
+}
+
 int main()
 {
+  int i = runSocket();
+  printf("%d\n", i);
+  /*
   ECO *ep = malloc(sizeof(ECO));
   createEcosystem(ep);
   runEcosystem(ep);
-  /*
+  
   generateRandomCreatures(ep, 5);
 
   printGraph(ep);
