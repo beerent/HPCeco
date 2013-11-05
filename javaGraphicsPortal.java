@@ -2,23 +2,32 @@ import java.io.*;
 import javax.swing.*;
 public class javaGraphicsPortal extends Thread{
 	private String name;
+	private final int PORT = 9999;
 	private int x, y;
 
 	public javaGraphicsPortal(){
 		this.name = "Graphics Portal";
+		this.x = -1;
+		this.y = -1;
 	}
 
-	public static void main(String[] args) {
+	public javaGraphicsPortal(int x, int y){
 
+	}
+
+	public javaGraphicsPortal(String name, int x, int y){
+
+	}
+
+	//main method
+	public static void main(String[] args) {
 		javaGraphicsPortal jgp = new javaGraphicsPortal();
 		jgp.createAndShowGUI();
-        //Schedule a job for the event-dispatching thread:
-        //creating and showing this application's GUI.
-        //javax.swing.SwingUtilities.invokeLater(new Runnable() {
-        //    public void run() {
-        //        createAndShowGUI();
-        //    }
-        //});
+    }
+
+    //runs the javaGraphicsPortal as a Thread
+    public void startPortal(){
+    	ServerSocket ss = new ServerSocket(PORT);
     }
 
     //sets the x and y axis for the JFrame
@@ -48,6 +57,10 @@ public class javaGraphicsPortal extends Thread{
 
         //Display the window.
         frame.setSize(this.x, this.y);
+        if(this.x <0 || this.y <0){
+        	System.err.println("!!!coordinates not set!!!");
+        	return;
+        }
         frame.setVisible(true);
         frame.setResizable(false);
     }
