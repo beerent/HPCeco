@@ -431,12 +431,13 @@ int runSocket()
     }
     */
     printf("out...\n");
-
     /* Write a response to the server */
     printf("sending...\n");
-    n = write(sockfd, "2",1);
-    n = write(sockfd, "3", 1);
-    printf("sent\n");
+    n = write(sockfd, "KEY",3);
+    //n = read(sockfd, recvBuff, sizeof(recvBuff)-1);
+    printf("FROM SERVER: %s\n", recvBuff);
+    //n = write(sockfd, "3", 1);
+    //printf("sent\n");
     if (n < 0)
     {
         perror("ERROR writing to socket");

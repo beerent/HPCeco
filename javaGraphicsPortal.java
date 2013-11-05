@@ -57,17 +57,21 @@ public class javaGraphicsPortal extends Thread{
     		//out.println("test");
     		//out.println("test2");
 
-    		//read window name
-    		//read window x value
-    		//read window y value
-    		int inputIn = in.read();
-    		System.out.println("1:"+inputIn);
-    		inputIn = in.read();
-    		System.out.println("2:"+inputIn);
-
+    		handshake(s);
+    		setParameters(s);
 		}catch(Exception e){
 			System.out.println("failed connection attempt on port " + PORT);
 		}
+    }
+
+    private void handshake(Socket s) throws IOException{
+    	String key = in.readLine();
+    	System.out.println("Server: " + key);
+    	out.println("KEY");
+    }
+
+    private void setParameters(Socket s){
+
     }
 
     //sets the x and y axis for the JFrame
