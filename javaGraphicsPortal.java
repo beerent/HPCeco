@@ -8,8 +8,9 @@ public class javaGraphicsPortal extends Thread{
     private final int PORT = 9999;
     private int x, y;
     
-    private PrintWriter out;
+    private PrintStream out;
     private BufferedReader in;
+    private Socket s;
     
     public javaGraphicsPortal(){
 	this.name = "Graphics Portal";
@@ -31,7 +32,8 @@ public class javaGraphicsPortal extends Thread{
     
     //main method
     public static void main(String[] args) {
-	javaGraphicsPortal jgp = new javaGraphicsPortal("Brents World", 200, 200);
+	javaGraphicsPortal jgp = new javaGraphicsPortal("Brents World", 500, 500);
+	//jgp.createAndShowGUI();
 	jgp.startPortal();
     }
     
@@ -47,17 +49,15 @@ public class javaGraphicsPortal extends Thread{
     	}
     	try{
 	    //waiting for connection
-	    System.out.println("waiting for connection...");
+	    report("waiting for connection...");
 	    s = ss.accept();
 	    //connection established
-	    System.out.println("Connected on port " + PORT);
+	    report("Connected on port " + PORT);
 	    
 	    //set up server IO to client
-	    this.out = new PrintWriter(s.getOutputStream(), true);
+	    this.s = s;
+	    this.out = new PrintStream(s.getOutputStream(), true);
 	    this.in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-	    
-	    //out.println("test");
-	    //out.println("test2");
 	    
 	    handshake(s);
 	    setParameters(s);
@@ -67,12 +67,16 @@ public class javaGraphicsPortal extends Thread{
     }
     
     private void handshake(Socket s) throws IOException{
-    	String key = in.readLine();             //get key from client
+    	String key = readFromClient(); //get key from client
 	if(!key.equals(CLIENTKEY)){
-	    System.out.println("Received incorrect client key");
+	    report("Received incorrect client key: " + key);
 	    return;
-	} 
-    	out.println("serverKEY");                     //send key to client
+	}
+	
+	report("received: " + key);
+    	report("sending key");
+	sendToClient("serverKEY"); //send key to client
+	report("sent\n");
     }
     
     private void setParameters(Socket s){
@@ -112,5 +116,17 @@ public class javaGraphicsPortal extends Thread{
         }
         frame.setVisible(true);
         frame.setResizable(false);
+    }
+
+    private void sendToClient(String msg){
+	out.println(msg);
+    }
+
+    private String readFromClient() throws IOException{
+	return in.readLine();
+    }
+
+    private void report(String s){
+	System.out.println("S: " + s);
     }
 }

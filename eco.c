@@ -102,6 +102,17 @@ struct ecosystem
 typedef struct ecosystem ECO;
 
 
+/*----------PROGRAMMER FUNCTIONS----------*/
+
+void report(char *msg)
+{
+  printf("C: %s\n", msg);
+}
+
+void reportData(char *msg, char *data)
+{
+  printf("C: %s: %s\n", msg, data);
+}
 
 /*----------ECOSYSTEM FUNCTIONS-----------*/
 
@@ -404,49 +415,45 @@ int runSocket()
   int sockfd = 0,n = 0;
   char recvBuff[1024];
   struct sockaddr_in serv_addr;
- 
+  
   memset(recvBuff, '0' ,sizeof(recvBuff));
   if((sockfd = socket(AF_INET, SOCK_STREAM, 0))< 0){
-      printf("\n Error : Could not create socket \n");
-      return 1;
+    printf("\n Error : Could not create socket \n");
+    return 1;
   }
- 
+  
   serv_addr.sin_family = AF_INET;
   serv_addr.sin_port = htons(9999); //defualt port set on the javaGraphicsPortal 
   serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); //localhost
-
+  
   //check if connection fails
   if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr))<0){
-      printf("\n Error : Connect Failed \n");
-      return 1;
+    printf("\n Error : Connect Failed \n");
+    return 1;
   }
-
+  
   //here, we are connected to the server
 
-  /*
-  while ( (n = read(sockfd, recvBuff, sizeof(recvBuff)-1)) > 0)
-    {
-      printf("in...\n");
-      recvBuff[n] = 0;
-      printf(recvBuff);
-      printf("...\n");
-    }
+/* Write a response to the client */
 
-    /* Write a response to the server */
-    printf("C: sending key...\n");
-    n = write(sockfd, "clientKEY",8);
-    printf("C: key sent");
-    n = read(sockfd, recvBuff, sizeof(recvBuff)-1);
-    printf("FROM SERVER: %s\n", recvBuff);
-    //n = write(sockfd, "3", 1);
-    //printf("sent\n");
-    if (n < 0)
-    {
-        perror("ERROR writing to socket");
-        exit(1);
-    }
+  report("sending key...");
+  n = write(sockfd, "clientKEY\n",11);
+  report("key sent");
+  
+  n = read(sockfd, recvBuff, sizeof(recvBuff)-1);
+  recvBuff[n] = 0;
+  report(recvBuff);
+
+  if(strcmp("serverKEY",recvBuff)!=0){
+    printf("hello\n");
+    exit(1);
+  }
+  
+
+  /* Handshake Complete */
+
   return 0;
-
+  
 }
 
 int main()
@@ -454,7 +461,7 @@ int main()
   int i = runSocket();
   printf("DONE: %d\n", i);
   /*
-  ECO *ep = malloc(sizeof(ECO));
+    ECO *ep = malloc(sizeof(ECO));
   createEcosystem(ep);
   runEcosystem(ep);
   
