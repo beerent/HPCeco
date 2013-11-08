@@ -1,6 +1,7 @@
 import java.net.*;
 import javax.swing.*;
 import java.io.*;
+
 public class javaGraphicsPortal extends Thread{
     private final String CLIENTKEY = "clientKEY";
 
@@ -33,8 +34,8 @@ public class javaGraphicsPortal extends Thread{
     //main method
     public static void main(String[] args) {
 	javaGraphicsPortal jgp = new javaGraphicsPortal("Brents World", 500, 500);
-	//jgp.createAndShowGUI();
-	jgp.startPortal();
+	jgp.createAndShowGUI();
+	//jgp.startPortal();
     }
     
     //runs the javaGraphicsPortal as a Thread
@@ -66,17 +67,16 @@ public class javaGraphicsPortal extends Thread{
 	}
     }
     
+    
+    //accepts a socket s, which established a connection 
     private void handshake(Socket s) throws IOException{
     	String key = readFromClient(); //get key from client
 	if(!key.equals(CLIENTKEY)){
 	    report("Received incorrect client key: " + key);
 	    return;
 	}
-	
-	report("received: " + key);
-    	report("sending key");
 	sendToClient("serverKEY"); //send key to client
-	report("sent\n");
+	report("connection established\n");
     }
     
     private void setParameters(Socket s){

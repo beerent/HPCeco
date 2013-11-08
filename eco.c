@@ -435,23 +435,12 @@ int runSocket()
   //here, we are connected to the server
 
 /* Write a response to the client */
-
-  report("sending key...");
-  n = write(sockfd, "clientKEY\n",11);
-  report("key sent");
-  
+  n = write(sockfd, "clientKEY\n",11);  
   n = read(sockfd, recvBuff, sizeof(recvBuff)-1);
   recvBuff[n] = 0;
-  report(recvBuff);
-
-  if(strcmp("serverKEY",recvBuff)!=0){
-    printf("hello\n");
-    exit(1);
-  }
-  
 
   /* Handshake Complete */
-
+  report("connection established");
 
   return 0;
   
@@ -460,7 +449,6 @@ int runSocket()
 int main()
 {
   int i = runSocket();
-  printf("DONE: %d\n", i);
   /*
     ECO *ep = malloc(sizeof(ECO));
   createEcosystem(ep);
