@@ -76,17 +76,19 @@ public class javaGraphicsPortal extends Thread{
         int y = -1;
 
         String str1 = readFromClient();
-        report(str1);
-        //String str2 = in.readLine();
-        try{
-            //x = Integer.parseInt(str1);
-            //y = Integer.parseInt(str2);
+        String str2 = readFromClient();
+	int ss = str1.length();
+	System.out.println(ss);
+
+	try{
+            x = Integer.parseInt(str1.substring(0, str1.length()));
+            y = Integer.parseInt(str2.substring(0, str2.length()));
         }catch(Exception e){
-            System.out.println("invalid integer, cannot set bounds. abort.");
+            System.out.println("invalid integer: cannot set bounds. abort.");
             return;
         }
         //integers parsed
-        //this.ip = new imagePrinter(x, y);
+        this.ip = new imagePrinter(x, y);
     }
     
     

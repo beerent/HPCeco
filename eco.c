@@ -116,6 +116,13 @@ void reportData(char *msg, char *data)
   printf("C: %s: %s\n", msg, data);
 }
 
+int intLen(int i)
+{
+  char testing[100];
+  sprintf(testing,"%d",i);
+  return strlen(testing);
+}
+
 /*----------ECOSYSTEM FUNCTIONS-----------*/
 
 
@@ -451,13 +458,19 @@ int openSocket(ECO *ep)
 
 void sendEcoBounds(ECO *ep)
 {
-  if((ep->sockfd = socket(AF_INET, SOCK_STREAM, 0))< 0){
-    printf("\n Socket error. cannot send bounds. \n");
-    return;
-  }
+  ep->x = 5;
+  ep->y = 66;
+  int numLenX = intLen(ep->x);
+  int numLenY = intLen(ep->y);
 
-  ep->n = write(ep->sockfd, "clientKEY13\n",13); 
-  printf("!!!: %d\n", ep->n);
+  char Xout[20];
+  char Yout[20];
+
+  //printf("%d\n", numLenX);
+  sprintf(Xout, "%d\n", ep->x);
+  sprintf(Yout, "%d\n", ep->y);
+  ep->n = write(ep->sockfd, Xout, numLenX +2);
+  ep->n = write(ep->sockfd, Yout, numLenY +2);
 }
 
 int main()
