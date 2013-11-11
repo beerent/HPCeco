@@ -52,7 +52,7 @@ public class javaGraphicsPortal extends Thread{
     	}
     	try{
 	    //waiting for connection
-	    report("waiting for connection...");
+	    report("\nwaiting for connection...");
 	    s = ss.accept();
 	    //connection established
 	    report("Connected on port " + PORT);
@@ -63,13 +63,13 @@ public class javaGraphicsPortal extends Thread{
 	    this.in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 	    
 	    handshake();
-        buildImageBuffer();
+	    buildImageBuffer();
 	    setParameters();
-	   }catch(Exception e){
-	      System.out.println("failed connection attempt on port " + PORT);
-	   }
+	}catch(Exception e){
+	    System.out.println("failed connection attempt on port " + PORT);
+	}
     }
-
+    
     private void buildImageBuffer() throws IOException{
         //get size of window
         int x = -1;
@@ -77,18 +77,18 @@ public class javaGraphicsPortal extends Thread{
 
         String str1 = readFromClient();
         String str2 = readFromClient();
-	int ss = str1.length();
-	System.out.println(ss);
 
 	try{
-            x = Integer.parseInt(str1.substring(0, str1.length()));
-            y = Integer.parseInt(str2.substring(0, str2.length()));
+	    //not sure why we start the substring from 1 ?...
+            x = Integer.parseInt(str1.substring(1, str1.length()));
+            y = Integer.parseInt(str2.substring(1, str2.length()));
         }catch(Exception e){
             System.out.println("invalid integer: cannot set bounds. abort.");
             return;
         }
         //integers parsed
         this.ip = new imagePrinter(x, y);
+	report("image Printer created.");
     }
     
     
@@ -100,7 +100,7 @@ public class javaGraphicsPortal extends Thread{
 	    return;
 	}
 	sendToClient("serverKEY"); //send key to client
-	report("connection established\n");
+	report("connection established");
     }
     
     private void setParameters(){
