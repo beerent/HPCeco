@@ -52,7 +52,7 @@ public class javaGraphicsPortal extends Thread{
     	}
     	try{
 	    //waiting for connection
-	    report("\nwaiting for connection...");
+	    report("waiting for connection...");
 	    s = ss.accept();
 	    //connection established
 	    report("Connected on port " + PORT);
@@ -79,7 +79,9 @@ public class javaGraphicsPortal extends Thread{
         String str2 = readFromClient();
 
 	try{
-	    //not sure why we start the substring from 1 ?...
+	    //we use substring from 1 , because there's an extra space added to the beginning of everthing this
+	    //server reveives. This is a security fix, or something of that matter. Can be turned off
+	    //at a later date, should I want to. For now, factor in the space. 
             x = Integer.parseInt(str1.substring(1, str1.length()));
             y = Integer.parseInt(str2.substring(1, str2.length()));
         }catch(Exception e){

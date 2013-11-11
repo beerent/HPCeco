@@ -160,9 +160,6 @@ void createEcosystem(ECO* eco)
       eco->graph[i][j] = -1;
     }
   }
-
-  eco-> sockfd = 0;
-  eco->n = 0;
 }
 
 creature* getCreatureByID(ECO *ep, int id){
@@ -463,6 +460,7 @@ void sendEcoBounds(ECO *ep)
   int numLenX = intLen(ep->x);
   int numLenY = intLen(ep->y);
 
+  //default to 20 for now
   char Xout[20];
   char Yout[20];
 
@@ -470,12 +468,13 @@ void sendEcoBounds(ECO *ep)
   sprintf(Xout, "%d\n", ep->x);
   sprintf(Yout, "%d\n", ep->y);
   ep->n = write(ep->sockfd, Xout, numLenX +2);
-  ep->n = write(ep->sockfd, Yout, numLenY +2);
+  ep->n = write(ep->sockfd, Yout, numLenY +2); 
 }
 
 int main()
 {  
     ECO *ep = malloc(sizeof(ECO));
+    createEcosystem(ep);
     int i = openSocket(ep);
     sendEcoBounds(ep);
 
