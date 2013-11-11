@@ -7,15 +7,18 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class imagePrinter extends JPanel {
+    private String name;
     private int width, height;    
     private BufferedImage window;
-
-    public imagePrinter(int width, int height) {
-	   this.width = width;
-	   this.height = height;
-       this.window = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    private Frame frame;
+    
+    public imagePrinter(int width, int height, String name) {
+	this.width = width;
+	this.height = height;
+	this.window = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+	this.frame = new JFrame(name);
     }
-
+    
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
@@ -57,13 +60,17 @@ public class imagePrinter extends JPanel {
         repaint();
     }
 
+    public void loadWindow(){
+
+    }
+
     public static void main(String[] args) {
         int width = 640;
         int height = 480;
         JFrame frame = new JFrame("Direct draw demo");
 
-        imagePrinter panel = new imagePrinter(width, height);
-        //panel.drawRect(Color.black, 5, 5, 40, 40);
+        imagePrinter panel = new imagePrinter(width, height, null);
+        panel.drawRect(Color.black, 5, 5, 40, 40);
         panel.fillCanvas(Color.black);
         panel.setPoint(Color.red, 20, 20);
 

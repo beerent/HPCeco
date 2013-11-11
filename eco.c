@@ -469,6 +469,7 @@ void sendEcoBounds(ECO *ep)
   sprintf(Yout, "%d\n", ep->y);
   ep->n = write(ep->sockfd, Xout, numLenX +2);
   ep->n = write(ep->sockfd, Yout, numLenY +2); 
+  ep->n = write(ep->sockfd, ep-> name, sizeof(ep-> name));
 }
 
 int main()

@@ -64,7 +64,6 @@ public class javaGraphicsPortal extends Thread{
 	    
 	    handshake();
 	    buildImageBuffer();
-	    setParameters();
 	}catch(Exception e){
 	    System.out.println("failed connection attempt on port " + PORT);
 	}
@@ -77,6 +76,7 @@ public class javaGraphicsPortal extends Thread{
 
         String str1 = readFromClient();
         String str2 = readFromClient();
+	String windowName = readFromClient();
 
 	try{
 	    //we use substring from 1 , because there's an extra space added to the beginning of everthing this
@@ -89,7 +89,7 @@ public class javaGraphicsPortal extends Thread{
             return;
         }
         //integers parsed
-        this.ip = new imagePrinter(x, y);
+        this.ip = new imagePrinter(x, y, windowName);
 	report("image Printer created.");
     }
     
@@ -103,10 +103,6 @@ public class javaGraphicsPortal extends Thread{
 	}
 	sendToClient("serverKEY"); //send key to client
 	report("connection established");
-    }
-    
-    private void setParameters(){
-	
     }
     
     //sets the x and y axis for the JFrame
