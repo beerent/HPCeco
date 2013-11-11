@@ -98,6 +98,8 @@ struct ecosystem
   creature **creaturesp;
   char name[12];
   int **graph;
+  int sockfd, n;
+  struct sockaddr_in serv_addr;
 };
 typedef struct ecosystem ECO;
 
@@ -151,6 +153,9 @@ void createEcosystem(ECO* eco)
       eco->graph[i][j] = -1;
     }
   }
+
+  eco-> sockfd = 0;
+  eco->n = 0;
 }
 
 creature* getCreatureByID(ECO *ep, int id){
@@ -410,24 +415,23 @@ void generateRandomCreatures(ECO *ep, int max)
   }
 }
 
-int runSocket()
+int openSocket(ECO *ep)
 {
-  int sockfd = 0,n = 0;
+  //int sockfd = 0,n = 0;
   char recvBuff[1024];
-  struct sockaddr_in serv_addr;
   
   memset(recvBuff, '0' ,sizeof(recvBuff));
-  if((sockfd = socket(AF_INET, SOCK_STREAM, 0))< 0){
+  if((ep->sockfd = socket(AF_INET, SOCK_STREAM, 0))< 0){
     printf("\n Error : Could not create socket \n");
     return 1;
   }
   
-  serv_addr.sin_family = AF_INET;
-  serv_addr.sin_port = htons(9999); //defualt port set on the javaGraphicsPortal 
-  serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); //localhost
+  ep->serv_addr.sin_family = AF_INET;
+  ep->serv_addr.sin_port = htons(9999); //defualt port set on the javaGraphicsPortal 
+  ep->serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); //localhost
   
   //check if connection fails
-  if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr))<0){
+  if(connect(ep->sockfd, (struct sockaddr *)&ep->serv_addr, sizeof(ep->serv_addr))<0){
     printf("\n Error : Connect Failed \n");
     return 1;
   }
@@ -435,24 +439,37 @@ int runSocket()
   //here, we are connected to the server
 
 /* Write a response to the client */
-  n = write(sockfd, "clientKEY\n",11);  
-  n = read(sockfd, recvBuff, sizeof(recvBuff)-1);
-  recvBuff[n] = 0;
+  ep->n = write(ep->sockfd, "clientKEY\n",11);  
+  ep->n = read(ep->sockfd, recvBuff, sizeof(recvBuff)-1);
+  recvBuff[ep->n] = 0;
 
   /* Handshake Complete */
   report("connection established");
 
-  return 0;
-  
+  return 0; 
+}
+
+void sendEcoBounds(ECO *ep)
+{
+  if((ep->sockfd = socket(AF_INET, SOCK_STREAM, 0))< 0){
+    printf("\n Socket error. cannot send bounds. \n");
+    return;
+  }
+
+  ep->n = write(ep->sockfd, "clientKEY13\n",13); 
+  printf("!!!: %d\n", ep->n);
 }
 
 int main()
-{
-  int i = runSocket();
-  /*
+{  
     ECO *ep = malloc(sizeof(ECO));
-  createEcosystem(ep);
-  runEcosystem(ep);
+    int i = openSocket(ep);
+    sendEcoBounds(ep);
+
+
+  //createEcosystem(ep);
+  //runEcosystem(ep);
+  /*
   
   generateRandomCreatures(ep, 5);
 

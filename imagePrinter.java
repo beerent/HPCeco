@@ -11,9 +11,9 @@ public class imagePrinter extends JPanel {
     private BufferedImage window;
 
     public imagePrinter(int width, int height) {
-	this.width = width;
-	this.height = height;
-        this.window = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+	   this.width = width;
+	   this.height = height;
+       this.window = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     }
 
     public void paintComponent(Graphics g) {
@@ -32,11 +32,6 @@ public class imagePrinter extends JPanel {
         repaint();
     }
 
-    public void drawLine(Color c, int x1, int y1, int x2, int y2) {
-        // Implement line drawing
-        repaint();
-    }
-
     public void drawRect(Color c, int x1, int y1, int width, int height) {
         int color = c.getRGB();
         // Implement rectangle drawing
@@ -45,6 +40,15 @@ public class imagePrinter extends JPanel {
                 this.window.setRGB(x, y, color);
             }
         }
+        repaint();
+    }
+
+    public void setPoint(Color c, int x, int y){
+        if(x> this.width || y > this.height){
+            System.out.println("point (" + x + ", " + y + ") is unreachable.");
+            return;
+        }
+        this.window.setRGB(x, y, c.getRGB());
         repaint();
     }
 
@@ -59,11 +63,14 @@ public class imagePrinter extends JPanel {
         JFrame frame = new JFrame("Direct draw demo");
 
         imagePrinter panel = new imagePrinter(width, height);
+        //panel.drawRect(Color.black, 5, 5, 40, 40);
+        panel.fillCanvas(Color.black);
+        panel.setPoint(Color.red, 20, 20);
 
         frame.add(panel);
         frame.pack();
         frame.setVisible(true);
-        frame.setResizable(false);
+        frame.setResizable(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 }

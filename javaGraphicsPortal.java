@@ -12,6 +12,8 @@ public class javaGraphicsPortal extends Thread{
     private PrintStream out;
     private BufferedReader in;
     private Socket s;
+
+    private imagePrinter ip;
     
     public javaGraphicsPortal(){
 	this.name = "Graphics Portal";
@@ -34,8 +36,8 @@ public class javaGraphicsPortal extends Thread{
     //main method
     public static void main(String[] args) {
 	javaGraphicsPortal jgp = new javaGraphicsPortal("Brents World", 500, 500);
-	jgp.createAndShowGUI();
-	//jgp.startPortal();
+	//jgp.createAndShowGUI();
+	jgp.startPortal();
     }
     
     //runs the javaGraphicsPortal as a Thread
@@ -60,16 +62,36 @@ public class javaGraphicsPortal extends Thread{
 	    this.out = new PrintStream(s.getOutputStream(), true);
 	    this.in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 	    
-	    handshake(s);
-	    setParameters(s);
-	}catch(Exception e){
-	    System.out.println("failed connection attempt on port " + PORT);
-	}
+	    handshake();
+        buildImageBuffer();
+	    setParameters();
+	   }catch(Exception e){
+	      System.out.println("failed connection attempt on port " + PORT);
+	   }
+    }
+
+    private void buildImageBuffer() throws IOException{
+        //get size of window
+        int x = -1;
+        int y = -1;
+
+        String str1 = readFromClient();
+        report(str1);
+        //String str2 = in.readLine();
+        try{
+            //x = Integer.parseInt(str1);
+            //y = Integer.parseInt(str2);
+        }catch(Exception e){
+            System.out.println("invalid integer, cannot set bounds. abort.");
+            return;
+        }
+        //integers parsed
+        //this.ip = new imagePrinter(x, y);
     }
     
     
     //accepts a socket s, which established a connection 
-    private void handshake(Socket s) throws IOException{
+    private void handshake() throws IOException{
     	String key = readFromClient(); //get key from client
 	if(!key.equals(CLIENTKEY)){
 	    report("Received incorrect client key: " + key);
@@ -79,7 +101,7 @@ public class javaGraphicsPortal extends Thread{
 	report("connection established\n");
     }
     
-    private void setParameters(Socket s){
+    private void setParameters(){
 	
     }
     
