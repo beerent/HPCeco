@@ -455,8 +455,6 @@ int openSocket(ECO *ep)
 
 void sendEcoBounds(ECO *ep)
 {
-  ep->x = 5;
-  ep->y = 66;
   int numLenX = intLen(ep->x);
   int numLenY = intLen(ep->y);
 

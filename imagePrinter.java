@@ -1,10 +1,7 @@
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
+import java.awt.Frame;
 import java.awt.image.BufferedImage;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 public class imagePrinter extends JPanel {
     private String name;
@@ -13,10 +10,18 @@ public class imagePrinter extends JPanel {
     private Frame frame;
     
     public imagePrinter(int width, int height, String name) {
-	this.width = width;
-	this.height = height;
-	this.window = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-	this.frame = new JFrame(name);
+	    this.width = width;
+	    this.height = height;
+	    this.window = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+	    this.frame = new Frame(name);
+        this.fillCanvas(Color.black);
+        this.setPoint(Color.red, 20, 20);
+        frame.add(this);
+        frame.pack();
+        frame.setSize(width, height);
+        frame.setVisible(true);
+        frame.setResizable(false);
+        //frame.setDefaultCloseOperation(Frame.EXIT_ON_CLOSE);
     }
     
     public void paintComponent(Graphics g) {
@@ -70,9 +75,11 @@ public class imagePrinter extends JPanel {
         JFrame frame = new JFrame("Direct draw demo");
 
         imagePrinter panel = new imagePrinter(width, height, null);
+        /*
         panel.drawRect(Color.black, 5, 5, 40, 40);
         panel.fillCanvas(Color.black);
         panel.setPoint(Color.red, 20, 20);
+        */
 
         frame.add(panel);
         frame.pack();
