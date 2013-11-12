@@ -462,9 +462,19 @@ void sendEcoBounds(ECO *ep)
 
 void sendCurrentEcoState(ECO *ep)
 {
-  int i, j;
-    for(i = 0; i < ep->x; i++){
-      printf("%s\n",ep->graph[i]);
+  int creatureBuff[1024];
+  int count = 0;
+  int i;
+  for(i = 0; i < ep-> creatureCount; i++)
+    {
+      creatureBuff[count] = ep->creaturesp[i]->x;
+      count++;
+      creatureBuff[count] = ep->creaturesp[i]->y;
+      count++;
+    }
+    for(i = 0; i < 2; i++)
+    {
+      printf("x: %d y: %d\n", creatureBuff[i], creatureBuff[i+1]);
     }
 }
 
