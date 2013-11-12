@@ -472,9 +472,9 @@ void sendCurrentEcoState(ECO *ep)
       creatureBuff[count] = ep->creaturesp[i]->y;
       count++;
     }
-    for(i = 0; i < 2; i++)
+    for(i = 0; i < 4; i++)
     {
-      printf("x: %d y: %d\n", creatureBuff[i], creatureBuff[i+1]);
+      printf("x: %d y: %d\n", creatureBuff[i], creatureBuff[++i]);
     }
 }
 
