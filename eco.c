@@ -460,22 +460,40 @@ void sendEcoBounds(ECO *ep)
   ep->n = write(ep->sockfd, strcat(ep->name, "\n"), sizeof(ep-> name));
 }
 
+void printCreatureLocations(ECO *ep)
+{
+    int i;
+    for(i = 0; i < ep -> creatureCount; i++)
+    {
+      printf("creature %d: x:%d y:%d\n", ep->creaturesp[i]->id, 
+        ep->creaturesp[i]->x, ep->creaturesp[i]->y); 
+    }
+    printf("\n");
+}
+
 void sendCurrentEcoState(ECO *ep)
 {
-  int creatureBuff[1024];
-  int count = 0;
   int i;
-  for(i = 0; i < ep-> creatureCount; i++)
-    {
-      creatureBuff[count] = ep->creaturesp[i]->x;
-      count++;
-      creatureBuff[count] = ep->creaturesp[i]->y;
-      count++;
-    }
-    for(i = 0; i < 4; i++)
-    {
-      printf("x: %d y: %d\n", creatureBuff[i], creatureBuff[++i]);
-    }
+  int c, x, y;
+  int count = 0;
+  int buffer[ep->creatureCount*3];
+  for(i = 0; i < ep->creatureCount; i++){
+    c = ep->creaturesp[i]->id;
+    x = ep->creaturesp[i]->x;
+    y = ep->creaturesp[i]->y;
+    buffer[count] = c;
+    count++;
+    buffer[count] = x;
+    count++;
+    buffer[count] = y;
+    count++;
+    printf("C: %d X: %d Y: %d\n", c, x, y);
+  }
+  count = 0;
+  for(i = 0; i < ep->creatureCount; i++){
+    printf("C: %d X: %d Y: %d\n", buffer[count], buffer[count+1], buffer[count+2]);
+    count +=3;
+  }
 }
 
 void printCommands()
