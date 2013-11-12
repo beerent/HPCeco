@@ -78,7 +78,7 @@ public class javaGraphicsPortal extends Thread{
     	String key = readFromClient(); //get key from client
      if(!key.equals(CLIENTKEY)){
          report("Received incorrect client key: " + key);
-         return;
+         System.exit(1);
      }
 	sendToClient("serverKEY"); //send key to client
 	report("connection established");
@@ -125,7 +125,7 @@ private void sendToClient(String msg){
 }
 
 private String readFromClient() throws IOException{
- return in.readLine();
+    return in.readLine();
 }
 
 private void report(String s){

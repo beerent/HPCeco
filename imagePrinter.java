@@ -15,12 +15,11 @@ public class imagePrinter extends JPanel {
 	    this.window = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 	    this.frame = new Frame(name);
         this.fillCanvas(Color.black);
-        this.setPoint(Color.red, 20, 20);
-        frame.add(this);
-        frame.pack();
         frame.setSize(width, height);
+        frame.add(this);
+        repaint();
         frame.setVisible(true);
-        frame.setResizable(false);
+        frame.setResizable(true);
         //frame.setDefaultCloseOperation(Frame.EXIT_ON_CLOSE);
     }
     
