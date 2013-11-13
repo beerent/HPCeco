@@ -10,17 +10,17 @@ public class imagePrinter extends JPanel {
     private Frame frame;
     
     public imagePrinter(int width, int height, String name) {
-	    this.width = width;
-	    this.height = height;
-	    this.window = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-	    this.frame = new Frame(name);
-        this.fillCanvas(Color.black);
-        frame.setSize(width, height);
-        frame.add(this);
-        repaint();
-        frame.setVisible(true);
-        frame.setResizable(true);
-        //frame.setDefaultCloseOperation(Frame.EXIT_ON_CLOSE);
+	this.width = width;
+	this.height = height;
+	this.window = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+	this.frame = new Frame(name);
+	this.fillCanvas(Color.black);
+	frame.setSize(width, height);
+	//frame.add(this);
+	repaint();
+	frame.setVisible(true);
+	frame.setResizable(true);
+	//frame.setDefaultCloseOperation(Frame.EXIT_ON_CLOSE);
     }
     
     public void paintComponent(Graphics g) {

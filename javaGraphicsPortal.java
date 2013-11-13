@@ -1,6 +1,7 @@
 import java.net.*;
 import javax.swing.*;
 import java.io.*;
+import java.util.*;
 
 public class javaGraphicsPortal extends Thread{
     private final String CLIENTKEY = "clientKEY";
@@ -68,6 +69,7 @@ public class javaGraphicsPortal extends Thread{
          buildImageBuffer();
          this.portalOn = true;
          runPortal();
+	 //this.start();
      }catch(Exception e){
          System.out.println("failed connection attempt on port " + PORT);
      }
@@ -112,23 +114,38 @@ private void buildImageBuffer() throws IOException{
 private void runPortal() throws IOException{
     while(this.portalOn){
         handleInput(readFromClient());
-        this.portalOn = false;
     }
 }
 
-private void handleInput(String input){
-
-}
-
-private void sendToClient(String msg){
- out.println(msg);
-}
-
-private String readFromClient() throws IOException{
-    return in.readLine();
-}
-
-private void report(String s){
- System.out.println("S: " + s);
-}
+    public void run(){
+	System.out.println("waiting...");
+	Scanner sc = new Scanner(System.in);
+	boolean on = true;
+	String input;
+	while(on){
+	    input = sc.next();
+	    if(input.equals("exit")) {
+		try{
+		    s.close();
+		}catch(Exception e){}
+		System.exit(0);
+	    }
+	}
+    }
+    
+    private void handleInput(String input){
+	report("RECEIVED: " + input);
+    }
+    
+    private void sendToClient(String msg){
+	out.println(msg);
+    }
+    
+    private String readFromClient() throws IOException{
+	return in.readLine();
+    }
+    
+    private void report(String s){
+	System.out.println("S: " + s);
+    }
 }

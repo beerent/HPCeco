@@ -477,6 +477,7 @@ void sendCurrentEcoState(ECO *ep)
   int c, x, y;
   int count = 0;
   int buffer[ep->creatureCount*3];
+  char charBuf[100];
   for(i = 0; i < ep->creatureCount; i++){
     c = ep->creaturesp[i]->id;
     x = ep->creaturesp[i]->x;
@@ -489,11 +490,21 @@ void sendCurrentEcoState(ECO *ep)
     count++;
     printf("C: %d X: %d Y: %d\n", c, x, y);
   }
-  count = 0;
-  for(i = 0; i < ep->creatureCount; i++){
-    printf("C: %d X: %d Y: %d\n", buffer[count], buffer[count+1], buffer[count+2]);
-    count +=3;
+  sprintf(charBuf, "%d%d%d", buffer[0], buffer[1], buffer[2]);
+  for(i = 3; i < (ep->creatureCount*3); i++){
+    sprintf(charBuf, "%s%d",charBuf, buffer[i]);
   }
+  ep->n = write(ep->sockfd, charBuf, (ep->creatureCount*3));
+  ep->n = write(ep->sockfd, "\n", 2);
+  printf("tada: %d", ep->n);
+  
+}
+
+void testSocket(ECO *ep)
+{
+  ep->n = write(ep->sockfd, "BR\n", 4);
+  ep->n = write(ep->sockfd, "BR\n", 4);
+  ep->n = write(ep->sockfd, "BR\n", 4);
 }
 
 void printCommands()
