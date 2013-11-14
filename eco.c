@@ -483,7 +483,7 @@ void sendCurrentEcoState(ECO *ep)
   sendToServer(ep, "IN\n", 4);
 
   for(i = 0; i < ep->creatureCount; i++){
-    sprintf(charBuf, "%d*%d*%d*", ep->creaturesp[i]->id, ep->creaturesp[i]->x, ep->creaturesp[i]->y);
+    sprintf(charBuf, "%d %d %d", ep->creaturesp[i]->id, ep->creaturesp[i]->x, ep->creaturesp[i]->y);
     sendToServer(ep, charBuf, strlen(charBuf));
     sendToServer(ep, "\n", 2);
   }
