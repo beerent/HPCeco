@@ -4,11 +4,13 @@ import java.awt.image.BufferedImage;
 import javax.swing.*;
 
 public class imagePrinter extends JPanel {
-    private String name;
-    private int width, height;    
-    private BufferedImage window;
-    private Frame frame;
-    
+
+    private String name; /* name of window */
+    private int width, height; /* x and y plane for the window */
+    private BufferedImage window; /* window to print to */
+    private Frame frame; /* */
+
+    /**/
     public imagePrinter(int width, int height, String name) {
 	this.width = width;
 	this.height = height;
@@ -16,7 +18,7 @@ public class imagePrinter extends JPanel {
 	this.frame = new Frame(name);
 	this.fillCanvas(Color.black);
 	frame.setSize(width, height);
-	//frame.add(this);
+	frame.add(this);
 	repaint();
 	frame.setVisible(true);
 	frame.setResizable(true);
@@ -51,6 +53,7 @@ public class imagePrinter extends JPanel {
     }
 
     public void setPoint(Color c, int x, int y){
+	if(c == null) c = Color.red;
         if(x> this.width || y > this.height){
             System.out.println("point (" + x + ", " + y + ") is unreachable.");
             return;

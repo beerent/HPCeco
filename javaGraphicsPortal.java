@@ -206,11 +206,44 @@ public class javaGraphicsPortal extends Thread{
      */
 
     private void printCoords()throws IOException{
+	Scanner sc;
+	
 	String coords = readFromClient();
+	coords = coords.substring(1, coords.length());
 	while(!coords.equals("OUT")){
 	    report(coords);
+	    sc = new Scanner(coords); //initialize Scanner
+	    String id = sc.next();// skip id
+
+	    int x = strtoint(sc.next()); // x
+	    int y = strtoint(sc.next()); // y
+
+	    if(x == -1 || y == -1){
+		report("error receiving coordinates for creature: " + id);
+	    }else{
+		ip.setPoint(null, x, y);
+	    }
+	    
+
+	    report("X: " + x + "Y: " + y);
 	    coords = readFromClient();
 	    coords = coords.substring(1, coords.length());
+	}
+    }
+
+    /*
+      simple method to parse a String to an int, so I don't need to write try catch blocks
+      all over my program.
+
+      returns n if parsable, else -1
+     */
+
+    private int strtoint(String s){
+	try{
+	    int n = Integer.parseInt(s);
+	    return n;
+	}catch(Exception e){
+	    return -1;
 	}
     }
     
