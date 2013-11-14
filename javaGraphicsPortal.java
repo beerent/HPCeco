@@ -77,7 +77,7 @@ public class javaGraphicsPortal extends Thread{
 
     //accepts a socket s, which established a connection 
  private void handshake() throws IOException{
-    	String key = readFromClient(); //get key from client
+    	String key = in.readLine(); //get key from client
      if(!key.equals(CLIENTKEY)){
          report("Received incorrect client key: " + key);
          System.exit(1);
@@ -99,8 +99,11 @@ private void buildImageBuffer() throws IOException{
         //we use substring from 1 , because there's an extra space added to the beginning of everthing this
         //server reveives. This is a security fix, or something of that matter. Can be turned off
         //at a later date, should I want to. For now, factor in the space. 
-        x = Integer.parseInt(str1.substring(1, str1.length()));
+        
+	x = Integer.parseInt(str1.substring(1, str1.length()));
         y = Integer.parseInt(str2.substring(1, str2.length()));
+	//x = Integer.parseInt(str1);
+	//y = Integer.parseInt(str2);
     }catch(Exception e){
         System.out.println("invalid integer: cannot set bounds. abort.");
         return;
@@ -133,10 +136,11 @@ private void runPortal() throws IOException{
 	}
     }
     
-    private void handleInput(String input){;
-	if(input!=null) input = input.substring(1, input.length());
+    private void handleInput(String input) throws IOException{
+	input = input.substring(1, input.length());
 	if(input.equals("0")){
-	    report("yes");
+	    String coordsStr = readFromClient();
+	    report("GOT: " + coordsStr);;
 	}else if(input.equals("done")){
 	    try{
 		s.close();
@@ -157,7 +161,9 @@ private void runPortal() throws IOException{
     }
     
     private String readFromClient() throws IOException{
-	return in.readLine();
+        String input = in.readLine();
+	//input = input.substring(1, input.length());
+	return input;
     }
     
     private void report(String s){
