@@ -478,6 +478,19 @@ int countCreatureCoords(ECO *ep)
 void sendCurrentEcoState(ECO *ep)
 {
   int i;
+  char charBuf[10];
+
+  sendToServer(ep, "IN\n", 4);
+
+  for(i = 0; i < ep->creatureCount; i++){
+    sprintf(charBuf, "%d*%d*%d*", ep->creaturesp[i]->id, ep->creaturesp[i]->x, ep->creaturesp[i]->y);
+    sendToServer(ep, charBuf, strlen(charBuf));
+    sendToServer(ep, "\n", 2);
+  }
+
+    sendToServer(ep, "OUT\n", 5);
+  /*
+  int i;
   char charBuf[countCreatureCoords(ep) + (countCreatureCoords(ep)*3)];
   sprintf(charBuf, "%d*%d*%d*", ep->creaturesp[0]->id, ep->creaturesp[0]->x, ep->creaturesp[0]->y);
   for(i = 1; i < ep->creatureCount; i++){
@@ -488,6 +501,7 @@ void sendCurrentEcoState(ECO *ep)
   sendToServer(ep, "0\n", 3);
   sendToServer(ep, charBuf, strlen(charBuf));
   sendToServer(ep, "\n", 2); 
+  */
 }
 
 void printCommands()

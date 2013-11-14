@@ -138,9 +138,8 @@ private void runPortal() throws IOException{
     
     private void handleInput(String input) throws IOException{
 	input = input.substring(1, input.length());
-	if(input.equals("0")){
-	    String coordsStr = readFromClient();
-	    report("GOT: " + coordsStr);;
+	if(input.equals("IN")){
+	    printCoords();
 	}else if(input.equals("done")){
 	    try{
 		s.close();
@@ -155,6 +154,15 @@ private void runPortal() throws IOException{
 	    }
 	}
     }
+
+    private void printCoords()throws IOException{
+	String coords = readFromClient();
+	while(!coords.equals("OUT")){
+	    report(coords);
+	    coords = readFromClient();
+	    coords = coords.substring(1, coords.length());
+	}
+    }
     
     private void sendToClient(String msg){
 	out.println(msg);
@@ -162,7 +170,6 @@ private void runPortal() throws IOException{
     
     private String readFromClient() throws IOException{
         String input = in.readLine();
-	//input = input.substring(1, input.length());
 	return input;
     }
     
