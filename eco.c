@@ -123,6 +123,10 @@ int intLen(int i)
   return strlen(testing);
 }
 
+void sendToServer(ECO *ep, char *msg, int len)
+{
+  ep->n = write(ep->sockfd, msg, len); 
+}
 /*----------ECOSYSTEM FUNCTIONS-----------*/
 
 
@@ -457,7 +461,7 @@ void sendEcoBounds(ECO *ep)
   sprintf(Yout, "%d\n", ep->y);
   ep->n = write(ep->sockfd, Xout, numLenX +2);
   ep->n = write(ep->sockfd, Yout, numLenY +2); 
-  ep->n = write(ep->sockfd, strcat(ep->name, "\n"), sizeof(ep-> name));
+  ep->n = write(ep->sockfd, strcat(ep->name, "\n"), 7);
 }
 
 void printCreatureLocations(ECO *ep)
@@ -494,17 +498,9 @@ void sendCurrentEcoState(ECO *ep)
   for(i = 3; i < (ep->creatureCount*3); i++){
     sprintf(charBuf, "%s%d",charBuf, buffer[i]);
   }
-  ep->n = write(ep->sockfd, charBuf, (ep->creatureCount*3));
-  ep->n = write(ep->sockfd, "\n", 2);
-  printf("tada: %d", ep->n);
   
-}
-
-void testSocket(ECO *ep)
-{
-  ep->n = write(ep->sockfd, "BR\n", 4);
-  ep->n = write(ep->sockfd, "BR\n", 4);
-  ep->n = write(ep->sockfd, "BR\n", 4);
+  sendToServer(ep, charBuf, (ep->creatureCount*3));
+  sendToServer(ep, "\n", 2); 
 }
 
 void printCommands()
@@ -523,6 +519,7 @@ void handleMasterInput(int input, ECO *ep)
   }else if(input == 2){
     sendCurrentEcoState(ep);
   }else if(input == 3){
+    sendToServer(ep, "done\n", 6);
     exit(0);
   }else{
     printf("invalid command: %d\n", input);

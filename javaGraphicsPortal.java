@@ -133,8 +133,23 @@ private void runPortal() throws IOException{
 	}
     }
     
-    private void handleInput(String input){
-	report("RECEIVED: " + input);
+    private void handleInput(String input){;
+	if(input!=null) input = input.substring(1, input.length());
+	if(input.equals("0")){
+	    report("yes");
+	}else if(input.equals("done")){
+	    try{
+		s.close();
+	    }catch(Exception e){
+		System.exit(1);
+	    }
+	    System.exit(0);
+	}else{
+	    if(input!= null){
+		report("size: " + input.length());
+		report("Server got: " + input);
+	    }
+	}
     }
     
     private void sendToClient(String msg){
