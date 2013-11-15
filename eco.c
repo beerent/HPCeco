@@ -489,19 +489,6 @@ void sendCurrentEcoState(ECO *ep)
   }
 
     sendToServer(ep, "OUT\n", 5);
-  /*
-  int i;
-  char charBuf[countCreatureCoords(ep) + (countCreatureCoords(ep)*3)];
-  sprintf(charBuf, "%d*%d*%d*", ep->creaturesp[0]->id, ep->creaturesp[0]->x, ep->creaturesp[0]->y);
-  for(i = 1; i < ep->creatureCount; i++){
-    sprintf(charBuf, "%s%d*%d*%d*", charBuf, ep->creaturesp[i]->id, ep->creaturesp[i]->x, ep->creaturesp[i]->y);
-  }
-
-  printf("***%s\n", charBuf);
-  sendToServer(ep, "0\n", 3);
-  sendToServer(ep, charBuf, strlen(charBuf));
-  sendToServer(ep, "\n", 2); 
-  */
 }
 
 void printCommands()
@@ -540,6 +527,49 @@ void manuallyControlEco(ECO *ep)
   }
 }
 
+void moveCreatureRandom(ECO *ep, creature *cp)
+{
+  int x = cp->x;
+  int y = cp->y;
+  //randomly choose up or down
+  //randomly choose left or right
+  //check for boarder, if boarder -> negate it.
+
+  int ranX = randomNum(1);
+  int ranY = randomNum(1);
+  
+  //ranX == 1, move right
+  if(ranX == 1){
+    if(x+1>ep->x) cp->x = x-1;   //move -1
+    else cp->x = x+1;            //move +1  
+  }else{
+    //ranX == 0, move left
+    if(x-1<0) cp->x = x+1;      //move+1
+    else cp->x = x-1;           //move -1
+  }
+
+  //ranY == 1, move right
+  if(ranY == 1){
+    if(y+1>ep->y) cp->y = y-1;
+    else cp->y = y+1;
+  }else{
+    //ranY == 0, move right
+    if(y-1<0) cp->y = y+1;
+    else cp->y = y-1;
+  }
+}
+
+void runEco(ECO *ep, int creatureCount)
+{
+  generateRandomCreatures(ep, creatureCount);
+  sendCurrentEcoState(ep);
+  int i;
+  for(i = 0; i < ep->creatureCount; i++){
+    moveCreatureRandom(ep, ep->creaturesp[i]);
+  }
+  //sendCurrentEcoState(ep);
+}
+
 
 /*----------MAIN FUNCTION-----------*/
 
@@ -555,7 +585,9 @@ int main()
   sendEcoBounds(ep);
 
   /* run ecosystem */
-  manuallyControlEco(ep);
+  //manuallyControlEco(ep);
+  runEco(ep, 10);
+  manuallyControlEco(ep); 
 
   /* testing code*/
 
