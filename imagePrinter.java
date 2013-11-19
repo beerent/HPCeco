@@ -32,6 +32,7 @@ public class imagePrinter extends JPanel {
     }
 
     public void fillCanvas(Color c) {
+        if(c == null) c = Color.black;
         int color = c.getRGB();
         for (int x = 0; x < this.window.getWidth(); x++) {
             for (int y = 0; y < this.window.getHeight(); y++) {
@@ -59,7 +60,7 @@ public class imagePrinter extends JPanel {
             return;
         }
         this.window.setRGB(x, y, c.getRGB());
-        repaint();
+        //repaint();
     }
 
     public void drawOval(Color c, int x1, int y1, int width, int height) {

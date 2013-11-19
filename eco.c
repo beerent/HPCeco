@@ -111,9 +111,9 @@ void report(char *msg)
   printf("C: %s\n", msg);
 }
 
-void reportData(char *msg, char *data)
+void reportData(char *msg, int data)
 {
-  printf("C: %s: %s\n", msg, data);
+  printf("C: %s: %d\n", msg, data);
 }
 
 int intLen(int i)
@@ -126,6 +126,11 @@ int intLen(int i)
 void sendToServer(ECO *ep, char *msg, int len)
 {
   ep->n = write(ep->sockfd, msg, len); 
+}
+
+void pause(int time)
+{
+  usleep(time);
 }
 /*----------ECOSYSTEM FUNCTIONS-----------*/
 
@@ -199,20 +204,24 @@ void setRandomCoords(ECO *ep, creature *cp)
 {
   int x = randomNum(ep->x);
   int y = randomNum(ep->y);
-  while(ep->graph[x][y] != -1){
-    x = randomNum(ep->x);
-    y = randomNum(ep->y);
-  }
+  //while(ep->graph[x][y] == -1){
+  //  x = randomNum(ep->x);
+  //  y = randomNum(ep->y);
+  //}
   cp->x = x;
   cp->y = y;
-  ep->graph[x][y] = getCreatureID(cp); 
+  //ep->graph[x][y] = getCreatureID(cp); 
 }
 
 //temporary function returns a psuedo random number.
-int randomNum(int max)
+//exclude limit
+int randomNum(int limit)
 {
-  srand(time(0));
-  return rand() % max;
+  limit--;
+  int divisor = RAND_MAX/( limit + 1 );
+  int retval;
+  do { retval = rand() / divisor; } while ( retval > limit );
+  return retval;
 }
 
 //adds a creature to the passed in ecosystem.
@@ -229,7 +238,9 @@ void addCreature(ECO *eco, creature *cp)
   eco->identifier++;
   eco->creaturesp[eco->creatureCount] = (cp);
   eco->creatureCount++;
+  printf("!! %d\n", cp->id);
   setRandomCoords(eco, cp);
+  printf("!!!! %d\n", cp->id);
 }
 
 void removeCreature(ECO *ep, creature *cp)
@@ -406,6 +417,7 @@ void generateRandomCreatures(ECO *ep, int max)
     creature *c;
     c = randomCreature();
     addCreature(ep, c);
+    printf("%d\n", i);
   }
 }
 
@@ -478,7 +490,7 @@ int countCreatureCoords(ECO *ep)
 void sendCurrentEcoState(ECO *ep)
 {
   int i;
-  char charBuf[10];
+  char charBuf[30];
 
   sendToServer(ep, "IN\n", 4);
 
@@ -486,6 +498,7 @@ void sendCurrentEcoState(ECO *ep)
     sprintf(charBuf, "%d %d %d", ep->creaturesp[i]->id, ep->creaturesp[i]->x, ep->creaturesp[i]->y);
     sendToServer(ep, charBuf, strlen(charBuf));
     sendToServer(ep, "\n", 2);
+    //printf("%d %d %d\n", ep->creaturesp[i]->id, ep->creaturesp[i]->x, ep->creaturesp[i]->y); 
   }
 
     sendToServer(ep, "OUT\n", 5);
@@ -502,8 +515,6 @@ void handleMasterInput(int input, ECO *ep)
 {
   if(input == 1){
     generateRandomCreatures(ep, 1);
-    printEcoState(ep);
-    printGraph(ep); 
   }else if(input == 2){
     sendCurrentEcoState(ep);
   }else if(input == 3){
@@ -535,12 +546,12 @@ void moveCreatureRandom(ECO *ep, creature *cp)
   //randomly choose left or right
   //check for boarder, if boarder -> negate it.
 
-  int ranX = randomNum(1);
-  int ranY = randomNum(1);
+  int ranX = randomNum(2);
+  int ranY = randomNum(2);
   
   //ranX == 1, move right
   if(ranX == 1){
-    if(x+1>ep->x) cp->x = x-1;   //move -1
+    if(x+1>ep->x-1) cp->x = x-1;   //move -1
     else cp->x = x+1;            //move +1  
   }else{
     //ranX == 0, move left
@@ -550,7 +561,7 @@ void moveCreatureRandom(ECO *ep, creature *cp)
 
   //ranY == 1, move right
   if(ranY == 1){
-    if(y+1>ep->y) cp->y = y-1;
+    if(y+1>ep->y-1) cp->y = y-1;
     else cp->y = y+1;
   }else{
     //ranY == 0, move right
@@ -564,10 +575,13 @@ void runEco(ECO *ep, int creatureCount)
   generateRandomCreatures(ep, creatureCount);
   sendCurrentEcoState(ep);
   int i;
-  for(i = 0; i < ep->creatureCount; i++){
-    moveCreatureRandom(ep, ep->creaturesp[i]);
+  while(1 == 1){
+    for(i = 0; i < ep->creatureCount; i++){
+     moveCreatureRandom(ep, ep->creaturesp[i]);
+    }
+    sendCurrentEcoState(ep);
+    pause(250000);
   }
-  //sendCurrentEcoState(ep);
 }
 
 
@@ -586,8 +600,8 @@ int main()
 
   /* run ecosystem */
   //manuallyControlEco(ep);
-  runEco(ep, 10);
-  manuallyControlEco(ep); 
+  runEco(ep, 2000);
+  //manuallyControlEco(ep); 
 
   /* testing code*/
 

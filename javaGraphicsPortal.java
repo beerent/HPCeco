@@ -84,6 +84,7 @@ public class javaGraphicsPortal extends Thread{
 	    handshake();
 	    buildImageBuffer();
 	    this.portalOn = true;
+	    report("ecosystem is running.");
 	    runPortal();
 	    //this.start();
 	}catch(Exception e){
@@ -148,7 +149,9 @@ public class javaGraphicsPortal extends Thread{
     
     private void runPortal() throws IOException{
 	while(this.portalOn){
-	    handleInput(readFromClient());
+		String s = readFromClient();
+		if(s != null)
+	    	handleInput(s);
 	}
     }
 
@@ -158,18 +161,32 @@ public class javaGraphicsPortal extends Thread{
      */
     
     public void run(){
-	System.out.println("waiting...");
-	Scanner sc = new Scanner(System.in);
-	boolean on = true;
-	String input;
-	while(on){
-	    input = sc.next();
-	    if(input.equals("exit")) {
+		
 		try{
-		    s.close();
-		}catch(Exception e){}
-		System.exit(0);
+	   Scanner sc;
+	
+	String coords = readFromClient();
+	coords = coords.substring(1, coords.length());
+	ip.fillCanvas(null);
+	while(!coords.equals("OUT")){
+		
+	    sc = new Scanner(coords); //initialize Scanner
+	    String id = sc.next();// skip id
+
+	    int x = strtoint(sc.next()); // x
+	    int y = strtoint(sc.next()); // y
+
+	    if(x == -1 || y == -1){
+		report("error receiving coordinates for creature: " + id);
+	    }else{
+		ip.setPoint(null, x, y);
 	    }
+
+	    coords = readFromClient();
+	    coords = coords.substring(1, coords.length());
+	}
+	}catch(Exception e){
+		System.out.println("FAIL IN THREAD");
 	}
     }
     
@@ -181,7 +198,7 @@ public class javaGraphicsPortal extends Thread{
     private void handleInput(String input) throws IOException{
 	input = input.substring(1, input.length());
 	if(input.equals("IN")){
-	    printCoords();
+		printCoords();
 	}else if(input.equals("done")){
 	    try{
 		s.close();
@@ -210,8 +227,10 @@ public class javaGraphicsPortal extends Thread{
 	
 	String coords = readFromClient();
 	coords = coords.substring(1, coords.length());
+	ip.fillCanvas(null);
+	int count = 0;
 	while(!coords.equals("OUT")){
-	    report(coords);
+		
 	    sc = new Scanner(coords); //initialize Scanner
 	    String id = sc.next();// skip id
 
@@ -223,12 +242,12 @@ public class javaGraphicsPortal extends Thread{
 	    }else{
 		ip.setPoint(null, x, y);
 	    }
-	    
 
-	    report("X: " + x + "Y: " + y);
+	    //report(""+x+y);
 	    coords = readFromClient();
 	    coords = coords.substring(1, coords.length());
 	}
+	ip.repaint();
     }
 
     /*
