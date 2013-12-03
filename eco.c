@@ -8,6 +8,8 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
+#include <mpi.h>
+
 /*
  *Brent Ryczak
  */
@@ -88,13 +90,20 @@ struct creature
 };
 typedef struct creature creature;
 
+struct grid
+{
+  int count;
+  int creatures[2];
+};
+typedef struct grid grid;
+
 struct ecosystem
 {  
   // identifier is an int that will ID each creature. Unlike creatureCount,
   // identifier will never decrement. This purpose is to prevent overlapping of
   // creature's id's (specifically when a creature is removed, and the creatureCount
   // is decremented. 
-  int x, y, size, creatureMaxCount, creatureCount, identifier;
+  int x, y, size, creatureMaxCount, creatureCount, identifier, graphics;
   creature **creaturesp;
   char name[12];
   int **graph;
@@ -139,7 +148,7 @@ void pause(int time)
 void createEcosystem(ECO* eco)
 { 
   /* get ecosystem name and parameters from user, to create a new ecosystem. */
-  int x, y;
+  int x, y, g;
   printf("Enter name of ecosystem: ");
   scanf("%s", eco->name);
   printf("Enter diameters of 2D ecosystem %s:", eco->name);
@@ -169,6 +178,10 @@ void createEcosystem(ECO* eco)
       eco->graph[i][j] = -1;
     }
   }
+
+  printf("enter 1 for java graphics\nenter 2 for console graphics\nenter anything else for no graphics\n");
+  scanf("%d", &g);
+  eco->graphics = g;
 }
 
 creature* getCreatureByID(ECO *ep, int id){
@@ -199,18 +212,30 @@ int countCreatures(ECO *eco)
   return eco->creatureCount;
 }
 
+void changeToGrid(ECO *ep, int x, int y, int nx, int ny, int id)
+{
+  ep->graph[x][y] = -1;
+  ep->graph[nx][ny] = id;
+}
+
+void changeCreatureCoords(creature *cp, int x, int y)
+{
+  cp->x = x;
+  cp->y = y;
+}
 
 void setRandomCoords(ECO *ep, creature *cp)
 {
   int x = randomNum(ep->x);
-  int y = randomNum(ep->y);
-  //while(ep->graph[x][y] == -1){
-  //  x = randomNum(ep->x);
-  //  y = randomNum(ep->y);
-  //}
-  cp->x = x;
-  cp->y = y;
-  //ep->graph[x][y] = getCreatureID(cp); 
+  int y= randomNum(ep->y);
+  if(ep->graph[x][y] != -1){
+    while(ep->graph[x][y] != -1){
+      x = randomNum(ep->x);
+      y = randomNum(ep->y);
+    }
+  }
+  changeToGrid(ep, cp->x, cp->y, x, y, cp->id);
+  changeCreatureCoords(cp, x, y);
 }
 
 //temporary function returns a psuedo random number.
@@ -238,9 +263,7 @@ void addCreature(ECO *eco, creature *cp)
   eco->identifier++;
   eco->creaturesp[eco->creatureCount] = (cp);
   eco->creatureCount++;
-  printf("!! %d\n", cp->id);
   setRandomCoords(eco, cp);
-  printf("!!!! %d\n", cp->id);
 }
 
 void removeCreature(ECO *ep, creature *cp)
@@ -540,19 +563,21 @@ void manuallyControlEco(ECO *ep)
 
 void moveCreatureRandom(ECO *ep, creature *cp)
 {
+  int ox = cp->x;
+  int oy = cp->y;
   int x = cp->x;
   int y = cp->y;
   //randomly choose up or down
   //randomly choose left or right
   //check for boarder, if boarder -> negate it.
-
+  
   int ranX = randomNum(2);
   int ranY = randomNum(2);
   
   //ranX == 1, move right
   if(ranX == 1){
     if(x+1>ep->x-1) cp->x = x-1;   //move -1
-    else cp->x = x+1;            //move +1  
+   else cp->x = x+1;            //move +1  
   }else{
     //ranX == 0, move left
     if(x-1<0) cp->x = x+1;      //move+1
@@ -568,18 +593,23 @@ void moveCreatureRandom(ECO *ep, creature *cp)
     if(y-1<0) cp->y = y+1;
     else cp->y = y-1;
   }
+  
+  changeToGrid(ep, ox, oy, cp->x, cp->y, cp->id);
 }
 
 void runEco(ECO *ep, int creatureCount)
 {
   generateRandomCreatures(ep, creatureCount);
-  sendCurrentEcoState(ep);
+  if(ep->graphics == 1)sendCurrentEcoState(ep);
+  else if( ep->graphics == 2) printGraph(ep);
+
   int i;
   while(1 == 1){
     for(i = 0; i < ep->creatureCount; i++){
      moveCreatureRandom(ep, ep->creaturesp[i]);
     }
-    sendCurrentEcoState(ep);
+    if(ep->graphics == 1) sendCurrentEcoState(ep);
+    else if(ep->graphics == 2) printGraph(ep);
     pause(250000);
   }
 }
@@ -593,14 +623,20 @@ int main()
   /* create ecosystem */
   ECO *ep = malloc(sizeof(ECO));
   createEcosystem(ep);
-
+  printf("here\n");
   /* networking with graphics server */
-  int i = openSocket(ep);
-  sendEcoBounds(ep);
+  if(ep->graphics == 1){
+    int i = openSocket(ep);
+    sendEcoBounds(ep);
+  }
+  printEcoState(ep);
 
+
+  //generateRandomCreatures(ep, 3);
+  printGraph(ep);
   /* run ecosystem */
   //manuallyControlEco(ep);
-  runEco(ep, 2000);
+  runEco(ep, 5);
   //manuallyControlEco(ep); 
 
   /* testing code*/
