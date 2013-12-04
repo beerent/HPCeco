@@ -19,7 +19,7 @@
  *includes fish, plant, or both.
  */
 
- typedef int boolean;
+typedef int boolean;
 #define true 1;
 #define false 0;
 
@@ -32,25 +32,25 @@
 //
 //creatures who eat fish must satisfy two conditions. 1) the creature must contain a larger
 //aggressionLevel its "opponent". 
- struct diet
- {
+struct diet
+{
   boolean fish;
   boolean plant; 
 };
 typedef struct diet diet;
 
 /*
-aggressionLevel: how aggressive the creature is begins on a 0-5 scale. 
-Aggression iscompared to another creature. The creature with the lower aggressionLevel 
-is consumed by the creature with the larger aggressionLevel. A tie is resolved randomly.
-
-worth: the worth of a creature is how much health the creature provides to the winner
-if the creature has lost a fight, before the creature is eliminated from the ecosystem.
-
-health: health is determined based on the creatures specific type. Once a creature's health
-becomes =< 0, the creature is eliminated.
-
-creature spawn chart (update as necessary):
+  aggressionLevel: how aggressive the creature is begins on a 0-5 scale. 
+  Aggression iscompared to another creature. The creature with the lower aggressionLevel 
+  is consumed by the creature with the larger aggressionLevel. A tie is resolved randomly.
+  
+  worth: the worth of a creature is how much health the creature provides to the winner
+  if the creature has lost a fight, before the creature is eliminated from the ecosystem.
+  
+  health: health is determined based on the creatures specific type. Once a creature's health
+  becomes =< 0, the creature is eliminated.
+  
+  creature spawn chart (update as necessary):
 */
 /*Creature      Health      Aggression 
  *
@@ -61,9 +61,9 @@ creature spawn chart (update as necessary):
  * 
  * Seaweed        01            0
  * Algae          00            0
-*/
- struct type
- {
+ */
+struct type
+{
   int aggressionLevel, worth, health;
   diet diet;
   int typeOp;
@@ -84,9 +84,9 @@ typedef struct type type;
 //creatures besides it's current opponent.  
 struct creature
 {
-  type type;
-  int id, x, y;
-  boolean inBattle;
+type type;
+int id, x, y;
+boolean inBattle;
 };
 typedef struct creature creature;
 
@@ -106,7 +106,7 @@ struct ecosystem
   int x, y, size, creatureMaxCount, creatureCount, identifier, graphics;
   creature **creaturesp;
   char name[12];
-  int **graph;
+  grid **graph;
   int sockfd, n;
   struct sockaddr_in serv_addr;
 };
@@ -117,7 +117,7 @@ typedef struct ecosystem ECO;
 
 void report(char *msg)
 {
-  printf("C: %s\n", msg);
+printf("C: %s\n", msg);
 }
 
 void reportData(char *msg, int data)
@@ -168,14 +168,15 @@ void createEcosystem(ECO* eco)
   eco->creatureMaxCount = x*y;
   
   /* initialize graph  */
-  eco->graph = malloc(sizeof(int*)*x);
+  eco->graph = malloc(sizeof(grid*)*x);
+  
   int i, j;
   for(i = 0; i < x; i++){
-    eco->graph[i] = malloc(sizeof(int)*y);
+    eco->graph[i] = malloc(sizeof(grid)*y);
   }
   for(i = 0; i < x; i++){
     for(j = 0; j < y; j++){
-      eco->graph[i][j] = -1;
+      printf("%d\n", eco->graph[i][j]->count);
     }
   }
 
