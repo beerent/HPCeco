@@ -8,7 +8,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
-#include <mpi.h>
+//#include <mpi.h>
 
 /*
  *Brent Ryczak
@@ -90,13 +90,6 @@ boolean inBattle;
 };
 typedef struct creature creature;
 
-struct grid
-{
-  int count;
-  int creatures[2];
-};
-typedef struct grid grid;
-
 struct ecosystem
 {  
   // identifier is an int that will ID each creature. Unlike creatureCount,
@@ -106,7 +99,7 @@ struct ecosystem
   int x, y, size, creatureMaxCount, creatureCount, identifier, graphics;
   creature **creaturesp;
   char name[12];
-  grid **graph;
+  int **graph;
   int sockfd, n;
   struct sockaddr_in serv_addr;
 };
@@ -167,19 +160,18 @@ void createEcosystem(ECO* eco)
   eco->creatureCount = 0;
   eco->creatureMaxCount = x*y;
   
-  /* initialize graph  */
-  eco->graph = malloc(sizeof(grid*)*x);
-  
+  /* initialize graph */
+  eco->graph = malloc(sizeof(int*)*x);
   int i, j;
   for(i = 0; i < x; i++){
-    eco->graph[i] = malloc(sizeof(grid)*y);
+    eco->graph[i] = malloc(sizeof(int)*y);
   }
   for(i = 0; i < x; i++){
     for(j = 0; j < y; j++){
-      printf("%d\n", eco->graph[i][j]->count);
+      eco->graph[i][j] = -1;
     }
   }
-
+  
   printf("enter 1 for java graphics\nenter 2 for console graphics\nenter anything else for no graphics\n");
   scanf("%d", &g);
   eco->graphics = g;
@@ -321,7 +313,7 @@ void creatureBattle(ECO *ep, creature *cp1, creature *cp2)
   }
 
   void printGraph(ECO *eco)
-  {
+  {/*
     int i, j;
     for(i = 0; i < eco->x; i++){
       for(j = 0; j < eco->y; j++){
@@ -331,7 +323,9 @@ void creatureBattle(ECO *ep, creature *cp1, creature *cp2)
       }
       printf("\n");
     }
-    printf("\n\n");
+   */
+    printf("\n%d\n", eco->creatureCount);
+    
   }
 
 void printCreatures(ECO *eco)
@@ -562,6 +556,21 @@ void manuallyControlEco(ECO *ep)
   }
 }
 
+void checkBattle(ECO *ep, creature *cp)
+{
+  int x = cp->x;
+  int y = cp->y;
+  int id = cp->id;
+
+  int i;
+  for(i = 0; i < ep->creatureCount; i++){
+    if(ep->creaturesp[i]->id !=id && ep->creaturesp[i]->x == x && ep->creaturesp[i]->y == y){
+      creatureBattle(ep, cp, ep->creaturesp[i]);
+      return;
+    }
+  }
+}
+
 void moveCreatureRandom(ECO *ep, creature *cp)
 {
   int ox = cp->x;
@@ -596,6 +605,7 @@ void moveCreatureRandom(ECO *ep, creature *cp)
   }
   
   changeToGrid(ep, ox, oy, cp->x, cp->y, cp->id);
+  checkBattle(ep, cp);
 }
 
 void runEco(ECO *ep, int creatureCount)
@@ -611,7 +621,7 @@ void runEco(ECO *ep, int creatureCount)
     }
     if(ep->graphics == 1) sendCurrentEcoState(ep);
     else if(ep->graphics == 2) printGraph(ep);
-    pause(250000);
+    pause(10000);
   }
 }
 
@@ -637,7 +647,7 @@ int main()
   printGraph(ep);
   /* run ecosystem */
   //manuallyControlEco(ep);
-  runEco(ep, 5);
+  runEco(ep, 10000);
   //manuallyControlEco(ep); 
 
   /* testing code*/
