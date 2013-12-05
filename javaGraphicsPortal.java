@@ -2,6 +2,7 @@ import java.net.*;
 import javax.swing.*;
 import java.io.*;
 import java.util.*;
+import java.awt.*;
 
 public class javaGraphicsPortal extends Thread{
     private final String CLIENTKEY = "clientKEY";
@@ -232,7 +233,7 @@ public class javaGraphicsPortal extends Thread{
 	while(!coords.equals("OUT")){
 		
 	    sc = new Scanner(coords); //initialize Scanner
-	    String id = sc.next();// skip id
+	    int id = strtoint(sc.next());// skip id
 
 	    int x = strtoint(sc.next()); // x
 	    int y = strtoint(sc.next()); // y
@@ -240,7 +241,7 @@ public class javaGraphicsPortal extends Thread{
 	    if(x == -1 || y == -1){
 		report("error receiving coordinates for creature: " + id);
 	    }else{
-		ip.setPoint(null, x, y);
+		ip.setPoint(getColorFromCode(id), x, y);
 	    }
 
 	    //report(""+x+y);
@@ -248,6 +249,19 @@ public class javaGraphicsPortal extends Thread{
 	    coords = coords.substring(1, coords.length());
 	}
 	ip.repaint();
+    }
+
+    private Color getColorFromCode(int i){
+    	if(i == 0) return Color.red;
+    	else if(i == 1) return Color.blue;
+    	else if(i == 2) return Color.cyan;
+    	else if(i == 3) return Color.orange;
+    	else if(i == 4) return Color.green;
+    	else if(i == 5) return Color.white;
+    	else{
+    		report("bad id: " + i);
+    		return Color.pink;
+    	} 
     }
 
     /*

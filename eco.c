@@ -276,32 +276,6 @@ void removeCreature(ECO *ep, creature *cp)
   ep->creatureCount--;
 }
 
-void creatureBattle(ECO *ep, creature *cp1, creature *cp2)
-{
-  cp1-> inBattle = true;
-  cp2-> inBattle = true;
-  
-  if(cp1->type.aggressionLevel > cp2->type.aggressionLevel){
-    printf("CREATURE %d CONSUMES CREATURE %d\n", cp1->id, cp2->id);
-    removeCreature(ep, cp2);
-    cp1-> inBattle = false;
-  }else if(cp2->type.aggressionLevel > cp1->type.aggressionLevel){
-    printf("CREATURE %d CONSUMES CREATURE %d\n", cp2->id, cp1->id);
-    removeCreature(ep, cp1);
-    cp2-> inBattle = false;
-  }else{
-    if(randomNum(2) == 1){
-      printf("CREATURE %d CONSUMES CREATURE %d\n", cp1->id, cp2->id);
-      removeCreature(ep, cp2);
-      cp1->inBattle = false;
-    }else{
-      printf("CREATURE %d CONSUMES CREATURE %d\n", cp2->id, cp1->id);
-      removeCreature(ep, cp1);
-      cp2->inBattle = false;
-    }
-  }
-}
-
 //prints the entire status of the passed in ecosystem to the console.
   void printEcoState(ECO *eco)
   {  
@@ -381,6 +355,27 @@ void buildCreature(creature *cp, int op)
  else{
 
  }
+}
+
+void creatureBattle(ECO *ep, creature *cp1, creature *cp2)
+{
+  cp1-> inBattle = true;
+  cp2-> inBattle = true;
+  
+  if(cp1->type.aggressionLevel > cp2->type.aggressionLevel){
+    printf("CREATURE %d CONSUMES CREATURE %d\n", cp1->id, cp2->id);
+    removeCreature(ep, cp2);
+    cp1-> inBattle = false;
+  }else if(cp2->type.aggressionLevel > cp1->type.aggressionLevel){
+    printf("CREATURE %d CONSUMES CREATURE %d\n", cp2->id, cp1->id);
+    removeCreature(ep, cp1);
+    cp2-> inBattle = false;
+  }else{
+    creature *c = malloc(sizeof(creature));
+    buildCreature(c, cp1->type.typeOp);
+    addCreature(ep, c);
+    printf("CREATURE %d REPRODUCED WITH CREATURE %d\n", cp2->id, cp1->id);
+  }
 }
 
 //this function creates a skeleton of a new creature, and returns its pointer
@@ -511,7 +506,7 @@ void sendCurrentEcoState(ECO *ep)
   sendToServer(ep, "IN\n", 4);
 
   for(i = 0; i < ep->creatureCount; i++){
-    sprintf(charBuf, "%d %d %d", ep->creaturesp[i]->id, ep->creaturesp[i]->x, ep->creaturesp[i]->y);
+    sprintf(charBuf, "%d %d %d", ep->creaturesp[i]->type.typeOp, ep->creaturesp[i]->x, ep->creaturesp[i]->y);
     sendToServer(ep, charBuf, strlen(charBuf));
     sendToServer(ep, "\n", 2);
     //printf("%d %d %d\n", ep->creaturesp[i]->id, ep->creaturesp[i]->x, ep->creaturesp[i]->y); 
@@ -620,7 +615,7 @@ void runEco(ECO *ep, int creatureCount)
     }
     if(ep->graphics == 1) sendCurrentEcoState(ep);
     else if(ep->graphics == 2) printGraph(ep);
-    pause(250000);
+    pause(25000);
   }
 }
 
@@ -646,7 +641,7 @@ int main(argc, argv)
   /* run ecosystem */
   //manuallyControlEco(ep);
   
-  runEco(ep, 10);
+  runEco(ep, 3000);
   //manuallyControlEco(ep); 
 
   /* testing code*/
