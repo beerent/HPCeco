@@ -8,7 +8,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
-//#include <mpi.h>
+#include <mpi.h>
 
 /*
  *Brent Ryczak
@@ -558,6 +558,7 @@ void manuallyControlEco(ECO *ep)
 
 void checkBattle(ECO *ep, creature *cp)
 {
+
   int x = cp->x;
   int y = cp->y;
   int id = cp->id;
@@ -629,7 +630,7 @@ void runEco(ECO *ep, int creatureCount)
 /*----------MAIN FUNCTION-----------*/
 
 
-int main()
+int main(argc, argv)
 {  
   /* create ecosystem */
   ECO *ep = malloc(sizeof(ECO));
@@ -641,13 +642,18 @@ int main()
     sendEcoBounds(ep);
   }
   printEcoState(ep);
-
+  int rank, size;
+  MPI_Init (&argc, &argv);      /* starts MPI */
+  MPI_Comm_rank (MPI_COMM_WORLD, &rank);        /* get current process id */
+  MPI_Comm_size (MPI_COMM_WORLD, &size);        /* get number of processes */
+  
 
   //generateRandomCreatures(ep, 3);
   printGraph(ep);
   /* run ecosystem */
   //manuallyControlEco(ep);
-  runEco(ep, 10000);
+  
+  runEco(ep, 10);
   //manuallyControlEco(ep); 
 
   /* testing code*/
